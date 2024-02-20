@@ -18,7 +18,7 @@ from deepface.commons.logger import Logger
 logger = Logger(module="deepface/detectors/DetectorWrapper.py")
 
 
-def build_model(detector_backend: str) -> Any:
+def build_model(detector_backend: str, **kwargs: Any) -> Detector:
     """
     Build a face detector model
     Args:
@@ -40,6 +40,21 @@ def build_model(detector_backend: str) -> Any:
         "fastmtcnn": FastMtCnn.FastMtCnnClient,
     }
 
+    args = {
+        "opencv": {},
+        "mtcnn": {},
+        "ssd": {},
+        "dlib": {},
+        "retinaface": {},
+        "mediapipe": {
+            "min_detection_confidence": kwargs.get("min_detection_confidence", 0.7),
+            "model_selection": kwargs.get("model_selection", 0),
+        },
+        "yolov8": {},
+        "yunet": {},
+        "fastmtcnn": {},
+    }
+
     if not "face_detector_obj" in globals():
         face_detector_obj = {}
 
@@ -48,7 +63,7 @@ def build_model(detector_backend: str) -> Any:
         face_detector = backends.get(detector_backend)
 
         if face_detector:
-            face_detector = face_detector()
+            face_detector = face_detector(**(args.get(detector_backend)))
             face_detector_obj[detector_backend] = face_detector
         else:
             raise ValueError("invalid detector_backend passed - " + detector_backend)

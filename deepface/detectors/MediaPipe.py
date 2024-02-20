@@ -9,7 +9,7 @@ class MediaPipeClient(Detector):
     def __init__(self):
         self.model = self.build_model()
 
-    def build_model(self) -> Any:
+    def build_model(self, **kwargs: Any) -> Any:
         """
         Build a mediapipe face detector model
         Returns:
@@ -24,8 +24,14 @@ class MediaPipeClient(Detector):
                 "Please install using 'pip install mediapipe' "
             ) from e
 
+        min_detection_confidence = kwargs.get("min_detection_confidence", 0.7)
+        model_selection = kwargs.get("model_selection", 0)
+
         mp_face_detection = mp.solutions.face_detection
-        face_detection = mp_face_detection.FaceDetection(min_detection_confidence=0.7)
+        face_detection = mp_face_detection.FaceDetection(
+            min_detection_confidence=min_detection_confidence, 
+            model_selection=model_selection
+            )
         return face_detection
 
     def detect_faces(self, img: np.ndarray) -> List[FacialAreaRegion]:
