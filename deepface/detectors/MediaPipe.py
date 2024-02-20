@@ -6,10 +6,10 @@ from deepface.models.Detector import Detector, FacialAreaRegion
 
 
 class MediaPipeClient(Detector):
-    def __init__(self):
-        self.model = self.build_model()
+    def __init__(self, min_detection_confidence: float = 0.7, model_selection: int = 0) -> None:
+        self.model = self.build_model(min_detection_confidence=min_detection_confidence, model_selection=model_selection)
 
-    def build_model(self, **kwargs: Any) -> Any:
+    def build_model(self, min_detection_confidence: float, model_selection: int) -> Any:
         """
         Build a mediapipe face detector model
         Returns:
@@ -23,9 +23,6 @@ class MediaPipeClient(Detector):
                 "MediaPipe is an optional detector, ensure the library is installed."
                 "Please install using 'pip install mediapipe' "
             ) from e
-
-        min_detection_confidence = kwargs.get("min_detection_confidence", 0.7)
-        model_selection = kwargs.get("model_selection", 0)
 
         mp_face_detection = mp.solutions.face_detection
         face_detection = mp_face_detection.FaceDetection(
